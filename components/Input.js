@@ -8,16 +8,13 @@ export default class Input extends Component {
         <TextInput
           style={{height: 40, width: 200}}
           placeholder="Home Address"
-          onChangeText={(text) => {
-            console.log(text)
-            this.props.setStart({text})
-          }}
+          onChangeText={(text) => this.props.setStart(text)}
           value={this.props.startText}
         />
         <TextInput
           style={{height: 40, width: 200}}
           placeholder="Work Address"
-          onChangeText={this.props.setEnd({text})}
+          onChangeText={(text) => this.props.setEnd(text)}
           value={this.props.endText}
         />
       </View>
