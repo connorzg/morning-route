@@ -13,11 +13,12 @@ export default class App extends Component {
         this.state = {
             startText: '5808 Miramonte Dr',
             endText: '600 Congress Ave',
-            summary: ''
+            summary: '',
+            driveTime: ''
         };
-        this._handleInput = this._handleInput.bind(this)
-        this._setStart = this._setStart.bind(this)
-        this._setEnd = this._setEnd.bind(this)
+        this._handleInput = this._handleInput.bind(this);
+        this._setStart = this._setStart.bind(this);
+        this._setEnd = this._setEnd.bind(this);
     }
 
     _setStart(text) {
@@ -29,9 +30,12 @@ export default class App extends Component {
     }
 
     _getRoute(start, end) {
-        let query = `https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
-        fetch(query).then((response) => response.json()).then((responseText) => {
-            this.setState({summary: responseText.routes[0].summary});;
+        let query = `https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&region=us&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
+        fetch(query).then((response) => response.json()).then((result) => {
+            // console.log(result);
+            let summary = result.routes[0].summary;
+            let driveTime = result.routes[0].legs[0].duration.text
+            this.setState({summary, driveTime});
         }).catch(function(error) {
             console.log(error);
         });
@@ -51,6 +55,8 @@ export default class App extends Component {
             <View style={styles.container}>
 
                 <Text>Take {this.state.summary} Today!</Text>
+                <Text>{this.state.driveTime}</Text>
+
                 <Input
                   setStart={this._setStart}
                   setEnd={this._setEnd}
