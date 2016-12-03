@@ -30,11 +30,11 @@ export default class App extends Component {
     }
 
     _getRoute(start, end) {
-        let query = `https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&region=us&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
+        let query = `https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&region=us&departure_time=now&traffic_model&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
         fetch(query).then((response) => response.json()).then((result) => {
-            // console.log(result);
+            console.log(result);
             let summary = result.routes[0].summary;
-            let driveTime = result.routes[0].legs[0].duration.text
+            let driveTime = result.routes[0].legs[0].duration_in_traffic.text
             this.setState({summary, driveTime});
         }).catch(function(error) {
             console.log(error);
@@ -45,7 +45,6 @@ export default class App extends Component {
         let locations = [this.state.startText, this.state.endText];
         locations.forEach(function(location) {
             location = location.replace(/\s+/g, '+');
-            console.log(location);
         })
         this._getRoute(locations[0], locations[1]);
     }
