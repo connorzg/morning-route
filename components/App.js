@@ -29,18 +29,6 @@ export default class App extends Component {
         this.setState({endText: text});
     }
 
-    _getRoute(start, end) {
-        let query = `https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&region=us&departure_time=now&traffic_model&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
-        fetch(query).then((response) => response.json()).then((result) => {
-            console.log(result);
-            let summary = result.routes[0].summary;
-            let driveTime = result.routes[0].legs[0].duration_in_traffic.text
-            this.setState({summary, driveTime});
-        }).catch(function(error) {
-            console.log(error);
-        });
-    }
-
     _handleInput() {
         let locations = [this.state.startText, this.state.endText];
         locations.forEach(function(location) {
@@ -49,12 +37,28 @@ export default class App extends Component {
         this._getRoute(locations[0], locations[1]);
     }
 
+    _getRoute(start, end) {
+        let query = `https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&region=us&departure_time=now&traffic_model&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
+        fetch(query).then((response) => response.json()).then((result) => {
+            console.log(result);
+            this._setDriveInfo(result);
+        }).catch(function(error) {
+            console.log(error);
+        });
+    }
+
+    _setDriveInfo(result) {
+      let summary = result.routes[0].summary;
+      let driveTime = result.routes[0].legs[0].duration_in_traffic.text;
+      this.setState({summary, driveTime});
+    }
+
     render() {
         return (
             <View style={styles.container}>
 
-                <Text>Take {this.state.summary} Today!</Text>
-                <Text>{this.state.driveTime}</Text>
+                <Text>Take {this.state.summary} today</Text>
+                <Text>The drive will take {this.state.driveTime}</Text>
 
                 <Input
                   setStart={this._setStart}
@@ -80,15 +84,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#FFF'
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5
     }
 });
