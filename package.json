@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "15.4.1",
     "react-native": "0.39.0",
-    "react-native-onesignal": "^1.2.3"
+    "react-native-fcm": "^2.5.0"
   },
   "devDependencies": {
     "babel-jest": "17.0.2",
