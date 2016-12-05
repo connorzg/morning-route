@@ -43,7 +43,6 @@ export default class App extends Component {
             console.log(result);
             this._setDriveInfo(result);
         }).catch(function(error) {
-            console.warn(error);
             console.log(error);
         });
     }
