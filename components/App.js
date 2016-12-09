@@ -49,7 +49,6 @@ export default class App extends Component {
     _getRoute(start, end) {
         let query = `https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&region=us&departure_time=now&traffic_model&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
         fetch(query).then((response) => response.json()).then((result) => {
-            console.log(result);
             this._setDriveInfo(result);
         }).catch(function(error) {
             console.log(error);
@@ -60,7 +59,10 @@ export default class App extends Component {
     _setDriveInfo(result) {
       let summary = result.routes[0].summary;
       let driveTime = result.routes[0].legs[0].duration_in_traffic.text;
-      this.setState({summary: `Take ${summary} today`, driveTime: `Your commute will take ${driveTime}`});
+      this.setState({
+        summary: `Take ${summary} today`,
+        driveTime: `Your commute will take ${driveTime}`
+      });
     }
 
     // Opens android time picker, sets hour and minute state when closed
@@ -93,11 +95,12 @@ export default class App extends Component {
 
     render() {
         return (
-          <View style={{backgroundColor: 'steelblue', flex: 1, paddingBottom: 50}}>
-            <Text style={{fontSize: 30, fontWeight: 'bold', color: 'white',textAlign: 'center', padding: 15}}>Morning Route</Text>
+          <View style={styles.view}>
+            <Text style={styles.title}>Morning Route</Text>
             <View style={styles.container}>
 
-                <View style={{height: 130, justifyContent: 'space-between'}}>
+                <View style={styles.input}>
+
                   <Input
                     setStart={this._setStart}
                     setEnd={this._setEnd}
@@ -108,49 +111,54 @@ export default class App extends Component {
                   <Button
                     onPress={this._handleInput}
                     title="View the current fastest route" color="steelblue"
-                    accessibilityLabel="Set Your Commute"
+                    accessibilityLabel="View the current fastest route"
                   />
+
                 </View>
 
-                <View style={{justifyContent: 'center',alignItems: 'center', height: 250}}>
+                <View style={styles.centerText}>
                   <Text style={styles.route}>{this.state.summary}</Text>
                   <Text style={styles.route}>{this.state.driveTime}</Text>
                 </View>
 
-                <View style={{
-                    justifyContent: 'space-around',
-                    height: 120,
-                    width: 300
-                  }}>
-                  {/* <Text style={{textAlign: 'center'}}>To schedule a daily notification:</Text> */}
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <Text style={{color: 'black',fontSize: 16,width:150}}>Notification Time:</Text>
+                <View style={styles.notification}>
+                  <View style={styles.row}>
+
+                    <Text style={styles.notifText}>Notification Time:</Text>
+
                     <Button style={styles.button}
                       onPress={this._timeAndDate}
                       title={`${this.state.hour}:${this.state.minute} AM`} color="steelblue"
                       accessibilityLabel="Set notification time"
                     />
+
                   </View>
 
                   <Button style={styles.button}
                     onPress={this._sendToServer}
                     title="Schedule your notification" color="steelblue"
-                    accessibilityLabel="Send"
+                    accessibilityLabel="Schedule the notification"
                   />
+
                 </View>
 
             </View>
-            </View>
+          </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFF'
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#FFF'
+    },
+    view: {
+      backgroundColor: 'steelblue',
+      flex: 1,
+      paddingBottom: 50
     },
     button: {
       margin: 20
@@ -160,5 +168,36 @@ const styles = StyleSheet.create({
       fontSize: 16,
       textAlign: 'center',
       width: 350
+    },
+    notification: {
+      justifyContent: 'space-around',
+      height: 120,
+      width: 300
+    },
+    title: {
+      fontSize: 30,
+      fontWeight: 'bold',
+      color: 'white',
+      textAlign: 'center',
+      padding: 15
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    centerText: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 250
+    },
+    input: {
+      height: 130,
+      justifyContent: 'space-between'
+    },
+    notifText: {
+      color: 'black',
+      fontSize: 16,
+      width:150
     }
 });
