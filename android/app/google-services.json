@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "642496660966",
+    "firebase_url": "https://morning-route.firebaseio.com",
+    "project_id": "morning-route",
+    "storage_bucket": "morning-route.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642496660966:android:7b3c1639748ae066",
+        "android_client_info": {
+          "package_name": "com.morningroute"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642496660966-v3mapal00p0i41pl24omptmvsm4ld9il.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "642496660966-m1iqd8p6rtmfu1oo07e4mvmbidlgdl4g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSJHEKX445ynAx89nRMxuDcorG06YRMQw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
