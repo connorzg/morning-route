@@ -14,9 +14,9 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            startText: '5808 Miramonte Dr',
-            endText: '600 Congress Ave',
-            summary: '',
+            startText: '',
+            endText: '',
+            summary: 'Set a FROM and TO address above. You can view the fastest route right now, or schedule a daily notification below. Scheduling a new notification will overwrite your previous one.',
             driveTime: '',
             hour: 7,
             minute: 30
@@ -28,10 +28,10 @@ export default class App extends Component {
         this._sendToServer = this._sendToServer.bind(this);
     }
 
+    // These functions handle text input, save it to state
     _setStart(text) {
         this.setState({startText: text});
     }
-    // Above and below functions handle text input, save it to state
     _setEnd(text) {
         this.setState({endText: text});
     }
@@ -93,11 +93,11 @@ export default class App extends Component {
 
     render() {
         return (
-          <View style={{backgroundColor: 'steelblue', flex: 1, paddingBottom: 40}}>
+          <View style={{backgroundColor: 'steelblue', flex: 1, paddingBottom: 50}}>
             <Text style={{fontSize: 30, fontWeight: 'bold', color: 'white',textAlign: 'center', padding: 15}}>Morning Route</Text>
             <View style={styles.container}>
-                <View style={{height: 100, justifyContent: 'space-between'}}>
 
+                <View style={{height: 130, justifyContent: 'space-between'}}>
                   <Input
                     setStart={this._setStart}
                     setEnd={this._setEnd}
@@ -105,28 +105,26 @@ export default class App extends Component {
                     endText={this.state.endText}
                   />
 
-                <Button
-                  onPress={this._handleInput}
-                  title="View the current fastest route" color="steelblue"
-                  accessibilityLabel="Set Your Commute"
-                />
+                  <Button
+                    onPress={this._handleInput}
+                    title="View the current fastest route" color="steelblue"
+                    accessibilityLabel="Set Your Commute"
+                  />
                 </View>
 
-                <View style={{justifyContent: 'center', height: 220}}>
+                <View style={{justifyContent: 'center',alignItems: 'center', height: 250}}>
                   <Text style={styles.route}>{this.state.summary}</Text>
                   <Text style={styles.route}>{this.state.driveTime}</Text>
                 </View>
 
-
                 <View style={{
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-around',
                     height: 120,
                     width: 300
                   }}>
-
-                  <Text style={{textAlign: 'center'}}>To schedule a daily notification:</Text>
+                  {/* <Text style={{textAlign: 'center'}}>To schedule a daily notification:</Text> */}
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <Text style={styles.route}>Set Notification Time </Text>
+                    <Text style={{color: 'black',fontSize: 16,width:150}}>Notification Time:</Text>
                     <Button style={styles.button}
                       onPress={this._timeAndDate}
                       title={`${this.state.hour}:${this.state.minute} AM`} color="steelblue"
@@ -159,6 +157,8 @@ const styles = StyleSheet.create({
     },
     route: {
       color: 'black',
-      fontSize: 16
+      fontSize: 16,
+      textAlign: 'center',
+      width: 350
     }
 });
