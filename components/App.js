@@ -10,6 +10,14 @@ import {
 import FCM from 'react-native-fcm';
 import Input from './Input.js';
 
+// TODO
+// Change name
+// Save routes
+// Save user home, work, etc
+// Schedule button color, make it pop!
+// eliminate repetitive api call
+// handle time better
+
 export default class App extends Component {
     constructor(props) {
         super(props);
@@ -19,7 +27,8 @@ export default class App extends Component {
             summary: 'Set a FROM and TO address above. You can view the fastest route right now, or schedule a daily notification below. Scheduling a new notification will overwrite your previous one.',
             driveTime: '',
             hour: 7,
-            minute: 30
+            minute: 30,
+            formattedTime: '7:30 AM'
         };
         this._handleInput = this._handleInput.bind(this);
         this._setStart = this._setStart.bind(this);
@@ -34,6 +43,19 @@ export default class App extends Component {
     }
     _setEnd(text) {
         this.setState({endText: text});
+    }
+
+    // Format from 24hr format, 1530 => 3:30 PM, 83 => 8:30 AM
+    _formatTime(h, min) {
+      if (min.toString().length == 1) {
+        min = `0${min}`
+      }
+
+      let suffix = h >= 12 ? "PM":"AM";
+      h = ((h + 11) % 12 + 1);
+
+      let formattedTime = `${h}:${min} ${suffix}`;
+      this.setState({formattedTime});
     }
 
     // Prepare route input for api call
@@ -51,7 +73,8 @@ export default class App extends Component {
         fetch(query).then((response) => response.json()).then((result) => {
             this._setDriveInfo(result);
         }).catch(function(error) {
-            console.log(error);
+            ToastAndroid.show('This route could not be calculated, please try again with a more specific address.',
+            ToastAndroid.LONG);
         });
     }
 
@@ -74,10 +97,11 @@ export default class App extends Component {
           is24Hour: false,
         });
         if (action !== TimePickerAndroid.dismissedAction) {
+          this._formatTime(hour, minute);
           this.setState({hour, minute});
         }
       } catch ({code, message}) {
-        console.warn('Cannot open time picker', message);
+        ToastAndroid.show('Cannot open the time picker, please restart the app.', ToastAndroid.LONG);
       }
     }
 
@@ -89,7 +113,7 @@ export default class App extends Component {
         hour: this.state.hour,
         minute: this.state.minute
       });
-      ToastAndroid.show(`Notification scheduled for ${this.state.hour}:${this.state.minute} AM`,
+      ToastAndroid.show(`Notification scheduled for ${this.state.formattedTime}`,
       ToastAndroid.SHORT);
     }
 
@@ -128,7 +152,7 @@ export default class App extends Component {
 
                     <Button style={styles.button}
                       onPress={this._timeAndDate}
-                      title={`${this.state.hour}:${this.state.minute} AM`} color="steelblue"
+                      title={this.state.formattedTime} color="steelblue"
                       accessibilityLabel="Set notification time"
                     />
 
