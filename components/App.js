@@ -5,10 +5,12 @@ import {
   View,
   TimePickerAndroid,
   Button,
-  ToastAndroid
+  ToastAndroid,
+  AsyncStorage
 } from 'react-native';
 import FCM from 'react-native-fcm';
 import Input from './Input.js';
+import Locations from './Locations.js'
 
 // TODO
 // Change name
@@ -22,13 +24,20 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            startText: '',
-            endText: '',
+            initialPosition: 'unknown',
+            lastPosition: 'unknown',
+            from: {},
+            to: {},
+            start: '5808 Miramonte Dr',
+            end: '600 Congress Ave',
+            startText: 'Home',
+            endText: 'Work',
             summary: 'Set a FROM and TO address above. You can view the fastest route right now, or schedule a daily notification below. Scheduling a new notification will overwrite your previous one.',
             driveTime: '',
             hour: 7,
             minute: 30,
-            formattedTime: '7:30 AM'
+            formattedTime: '7:30 AM',
+            formattedCurrentLocation: ''
         };
         this._handleInput = this._handleInput.bind(this);
         this._setStart = this._setStart.bind(this);
@@ -37,13 +46,70 @@ export default class App extends Component {
         this._sendToServer = this._sendToServer.bind(this);
     }
 
+    watchID: ?number = null;
+
+    componentDidMount() {
+      // this._getHome();
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          var initialPosition = JSON.stringify(position);
+          this.setState({initialPosition});
+        },
+        (error) => alert(JSON.stringify(error)),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+      );
+
+      this.watchID = navigator.geolocation.watchPosition((position) => {
+        var lastPosition = JSON.stringify(position);
+        this.setState({lastPosition});
+      });
+
+      let query = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.lastPosition}&key=AIzaSyB3xsLMFn2XoZfmywOnsWn8tf0Ffvw7FF0`
+      fetch(query).then((response) => response.json()).then((result) => {
+          this.setState({formattedCurrentLocation: result})
+          console.log(result);
+      })
+    }
+
+    componentWillUnmount() {
+      navigator.geolocation.clearWatch(this.watchID);
+    }
+
     // These functions handle text input, save it to state
-    _setStart(text) {
-        this.setState({startText: text});
+    _setStart(key, value) {
+        this.setState({startText: key, start: value});
     }
-    _setEnd(text) {
-        this.setState({endText: text});
+    _setEnd(key, value) {
+        this.setState({endText: key, end: value});
     }
+
+    //  this.setState({from: this.state.from.push(place)});
+
+
+    async _setFrom() {
+      try {
+        await AsyncStorage.setItem('@From:Home', '5808 Miramonte Dr');
+      } catch (error) {
+        // Error saving data
+        console.log(error);
+      }
+    }
+
+    async _getFrom() {
+      try {
+        const value = await AsyncStorage.getItem('@From');
+        if (value !== null){
+          // We have data!!
+          console.log(value);
+          this.setState({from: value});
+        }
+      } catch (error) {
+        // Error retrieving data
+        console.log(error);
+      }
+    }
+
 
     // Format from 24hr format, 1530 => 3:30 PM, 83 => 8:30 AM
     _formatTime(h, min) {
@@ -125,11 +191,30 @@ export default class App extends Component {
 
                 <View style={styles.input}>
 
-                  <Input
+                  <View>
+                    <Text>
+                      <Text style={styles.title}>Initial position: </Text>
+                      {this.state.initialPosition}
+                    </Text>
+                    <Text>
+                      <Text style={styles.title}>Current position: </Text>
+                      {this.state.lastPosition}
+                    </Text>
+                  </View>
+
+                  {/* <Input
                     setStart={this._setStart}
                     setEnd={this._setEnd}
                     startText={this.state.startText}
                     endText={this.state.endText}
+                  /> */}
+
+                  <Locations
+                    setStart={this._setStart}
+                    setEnd={this._setEnd}
+                    startText={this.state.startText}
+                    endText={this.state.endText}
+                    currentLocation={this.state.formattedCurrentLocation}
                   />
 
                   <Button
