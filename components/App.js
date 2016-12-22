@@ -191,7 +191,7 @@ export default class App extends Component {
 
                 <View style={styles.input}>
 
-                  <View>
+                  {/* <View>
                     <Text>
                       <Text style={styles.title}>Initial position: </Text>
                       {this.state.initialPosition}
@@ -200,7 +200,7 @@ export default class App extends Component {
                       <Text style={styles.title}>Current position: </Text>
                       {this.state.lastPosition}
                     </Text>
-                  </View>
+                  </View> */}
 
                   {/* <Input
                     setStart={this._setStart}
